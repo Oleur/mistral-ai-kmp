@@ -6,6 +6,7 @@ import org.mistral.ai.kmp.domain.ChatParams
 import org.mistral.ai.kmp.domain.Embeddings
 import org.mistral.ai.kmp.domain.Message
 import org.mistral.ai.kmp.domain.Model
+import org.mistral.ai.kmp.domain.Role
 
 class MistralClient(apiKey: String) {
 
@@ -20,6 +21,7 @@ class MistralClient(apiKey: String) {
         messages: List<Message>,
         params: ChatParams? = null,
     ): Result<List<Message>> {
+        messages.validate()
         return service.chat(model, messages, params)
     }
 
@@ -28,6 +30,7 @@ class MistralClient(apiKey: String) {
         messages: List<Message>,
         params: ChatParams? = null,
     ): Flow<Result<List<Message>>> {
+        messages.validate()
         return service.chatStream(model, messages, params)
     }
 
@@ -36,5 +39,12 @@ class MistralClient(apiKey: String) {
         input: List<String>,
     ): Result<Embeddings> {
         return service.createEmbeddings(model, input)
+    }
+
+    private fun List<Message>.validate() {
+        require(isNotEmpty()) { "Messages cannot be empty!" }
+        require(first().role in listOf(Role.USER, Role.SYSTEM)) {
+            "The first prompt role should be user or system."
+        }
     }
 }

@@ -3,7 +3,6 @@ package org.mistral.ai.kmp.api
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
-import io.ktor.client.plugins.api.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
@@ -31,15 +30,12 @@ internal class MistralService(private val auth: String) {
     }
 
     private val client = HttpClient {
-        install(
-            createClientPlugin("HeaderPlugin") {
-                onRequest { request, _ ->
-                    request.headers.append(HttpHeaders.Accept, "application/json")
-                    request.headers.append(HttpHeaders.ContentType, "application/json")
-                    request.headers.append(HttpHeaders.Authorization, "Bearer $auth")
-                }
-            }
-        )
+        defaultRequest {
+            url(BASE_URL)
+            headers.append(HttpHeaders.Accept, "application/json")
+            headers.append(HttpHeaders.ContentType, "application/json")
+            headers.append(HttpHeaders.Authorization, "Bearer $auth")
+        }
         install(Logging) {
             logger = object: Logger {
                 override fun log(message: String) {
@@ -59,10 +55,9 @@ internal class MistralService(private val auth: String) {
 
     suspend fun getModels(): Result<List<Model>> {
         return runCatching {
-            val response: ModelsResponse = client.get("$BASE_URL/v1/models").body()
-            val models = responseMapper.mapModels(response.data)
-            Result.success(models)
-        }.getOrElse(Result.Companion::failure)
+            val response: ModelsResponse = client.get("/v1/models").body()
+            responseMapper.mapModels(response.data)
+        }
     }
 
     suspend fun chat(
@@ -77,14 +72,12 @@ internal class MistralService(private val auth: String) {
                 params = params
             )
 
-            val response: CompletionsResponse = client.post("$BASE_URL/v1/chat/completions") {
+            val response: CompletionsResponse = client.post("/v1/chat/completions") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }.body()
 
-            Result.success(responseMapper.mapChoices(response.choices))
-        }.getOrElse {
-            Result.failure(it)
+            responseMapper.mapChoices(response.choices)
         }
     }
 
@@ -101,7 +94,7 @@ internal class MistralService(private val auth: String) {
                 params = params
             )
 
-            val channel = client.post("$BASE_URL/v1/chat/completions") {
+            val channel = client.post("/v1/chat/completions") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }.bodyAsChannel()
@@ -124,14 +117,12 @@ internal class MistralService(private val auth: String) {
         return runCatching {
             val request = EmbeddingsRequest(model, input)
 
-            val response: EmbeddingsResponse = client.post("$BASE_URL/v1/embeddings") {
+            val response: EmbeddingsResponse = client.post("/v1/embeddings") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }.body()
 
-            Result.success(responseMapper.mapEmbeddings(response))
-        }.getOrElse {
-            Result.failure(it)
+            responseMapper.mapEmbeddings(response)
         }
     }
 
