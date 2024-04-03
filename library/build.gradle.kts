@@ -58,11 +58,11 @@ kotlin {
         }
         val jsWasmMain by creating {
             dependencies {
-                implementation("io.ktor:ktor-client-core:3.0.0-wasm1")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:3.0.0-wasm1")
-                implementation("io.ktor:ktor-client-content-negotiation:3.0.0-wasm1")
-                implementation("io.ktor:ktor-client-resources:3.0.0-wasm1")
-                implementation("io.ktor:ktor-client-logging:3.0.0-wasm1")
+                implementation("io.ktor:ktor-client-core:3.0.0-wasm2")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:3.0.0-wasm2")
+                implementation("io.ktor:ktor-client-content-negotiation:3.0.0-wasm2")
+                implementation("io.ktor:ktor-client-resources:3.0.0-wasm2")
+                implementation("io.ktor:ktor-client-logging:3.0.0-wasm2")
             }
         }
         val wasmJsMain by getting {

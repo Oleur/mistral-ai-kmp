@@ -119,7 +119,7 @@ buildkonfig {
         buildConfigField(
             type = FieldSpec.Type.STRING,
             name = "MISTRAL_API_KEY",
-            value = localProperties.getProperty("mistral_api_key")
+            value = localProperties?.getProperty("mistral_api_key").orEmpty()
         )
     }
 }
@@ -140,6 +140,8 @@ compose.experimental {
     web.application {}
 }
 
-fun File.asProperties(): Properties = inputStream().use { input ->
-    Properties().apply { load(input) }
-}
+fun File.asProperties(): Properties? = runCatching {
+    inputStream().use { input ->
+        Properties().apply { load(input) }
+    }
+}.getOrNull()
