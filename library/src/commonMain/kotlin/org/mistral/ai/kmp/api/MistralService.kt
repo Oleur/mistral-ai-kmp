@@ -30,6 +30,7 @@ internal class MistralService(private val auth: String) {
     }
 
     private val client = HttpClient {
+        expectSuccess = true
         defaultRequest {
             url(BASE_URL)
             headers.append(HttpHeaders.Accept, "application/json")
