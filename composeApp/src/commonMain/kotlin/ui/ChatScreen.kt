@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -90,7 +91,7 @@ fun ChatScreen(
                                 modifier = Modifier
                                     .size(32.dp)
                                     .border(2.dp, Color.LightGray, CircleShape)
-                                    .padding(1.dp)
+                                    .padding(top = 2.dp)
                                     .clip(CircleShape)
                                     .align(Alignment.Center),
                                 text = "U",
@@ -100,16 +101,18 @@ fun ChatScreen(
                             )
                         }
                     }
-                    Text(
-                        modifier = Modifier.weight(1f),
-                        text = item.content,
-                        fontSize = 16.sp,
-                        fontWeight = if (item.isMistral == true) {
-                            FontWeight.Normal
-                        } else {
-                            FontWeight.SemiBold
-                        }
-                    )
+                    SelectionContainer {
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = item.content,
+                            fontSize = 16.sp,
+                            fontWeight = if (item.isMistral == true) {
+                                FontWeight.Normal
+                            } else {
+                                FontWeight.SemiBold
+                            }
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.size(8.dp))
             }
@@ -139,7 +142,7 @@ fun ChatScreen(
                 ),
                 placeholder = {
                     Text(
-                        text = "Talk to ZeChat powered by MistralAI...",
+                        text = "Talk to ZeChat powered by Mistral AI...",
                         color = Color(0xFFA0A0A0),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Light,
