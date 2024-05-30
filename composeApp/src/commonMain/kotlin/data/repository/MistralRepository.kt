@@ -8,9 +8,11 @@ import org.mistral.ai.kmp.domain.Message
 import org.mistral.ai.kmp.domain.Model
 
 class MistralRepository(
-    private val mistralClient: MistralClient,
     private val modelCacheDataSource: ModelCacheDataSource,
+    apiKey: String,
 ) {
+
+    private var mistralClient = MistralClient(apiKey)
 
     suspend fun getModels() = mistralClient.getModels()
 
@@ -36,5 +38,9 @@ class MistralRepository(
 
     fun setSelectedModel(model: Model) {
         modelCacheDataSource.setSelectedModelId(model.id)
+    }
+
+    fun setApiKey(apiKey: String) {
+        mistralClient = MistralClient(apiKey)
     }
 }

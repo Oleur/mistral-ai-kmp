@@ -41,16 +41,18 @@ Multiplatform so every app shares the same UI code which is located in `composeA
 In order to play with ZeChat apps, you need to get your own Mistral API Key and add it to the `local.properties` file
 located in the project root. Get your API key on the [Mistral Console](https://console.mistral.ai/).
 
-- Android
- 
+Alternatively, when playing with the [Web Sample app](https://oleur.github.io/mistral-ai-kmp/), there will be a popup to
+directly enter your API key to play the ZeChat.
+
+- Android 
 ![screenshot](./assets/zechat_android.png)
 
 - iOS (_coming soon_)
+
 - Desktop
-
 ![screenshot](./assets/zechat_desktop.png)
-- Web (Wasm)
 
+- Web (Wasm)
 ![screenshot](./assets/zechat_web.png)
 
 **ℹ️ Note:** The Mistral AI library for KMP isn't published to maven yet. I'll update once the library is live
@@ -59,7 +61,7 @@ and available. Meanwhile, you can fork the project and use the library as a modu
 ## License
 
 <pre>
-Copyright 2020 Julien Salvi
+Copyright 2024 Julien Salvi
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

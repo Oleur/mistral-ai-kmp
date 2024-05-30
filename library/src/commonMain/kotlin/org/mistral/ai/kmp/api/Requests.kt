@@ -11,7 +11,7 @@ internal data class CompletionRequest(
     @SerialName("top_p") val topP: Float? = null,
     @SerialName("max_tokens") val maxTokens: Long? = null,
     @SerialName("stream") val stream: Boolean? = false,
-    @SerialName("safe_prompt") val safePrompt: Boolean? = null,
+    @SerialName("safe_prompt") val safePrompt: Boolean = false,
     @SerialName("random_seed") val randomSeed: Int? = null,
 )
 
@@ -25,5 +25,7 @@ internal data class MessageRequest(
 internal data class EmbeddingsRequest(
     @SerialName("model") val model: String,
     @SerialName("input") val input: List<String>,
-    @SerialName("encoding_format") val encodingFormat: String = "float",
+    @SerialName("encoding_format") val encodingFormat: String = ENCODING_FORMAT_FLOAT,
 )
+
+internal const val ENCODING_FORMAT_FLOAT = "float"

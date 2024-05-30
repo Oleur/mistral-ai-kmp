@@ -4,25 +4,13 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.runtime.Composable
@@ -42,11 +30,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mistral_ai_kmp.composeapp.generated.resources.Res
 import mistral_ai_kmp.composeapp.generated.resources.ic_mistral_ai
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import ui.state.ChatViewState
 
-@OptIn(ExperimentalResourceApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ChatScreen(
     modifier: Modifier = Modifier,
@@ -117,62 +104,55 @@ fun ChatScreen(
                 Spacer(modifier = Modifier.size(8.dp))
             }
         }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            val textState = remember { mutableStateOf(TextFieldValue()) }
-            val buttonEnabled = remember { mutableStateOf(false) }
-            TextField(
-                modifier = Modifier
-                    .weight(1f)
-                    .align(Alignment.CenterVertically)
-                    .border(2.dp, Color.LightGray, RoundedCornerShape(50.dp)),
-                value = textState.value,
-                onValueChange = {
-                    textState.value = it
-                    buttonEnabled.value = it.text.isNotBlank()
-                },
-                shape = RoundedCornerShape(16.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White,
-                    cursorColor = Color(0xFFFDBA94),
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                ),
-                placeholder = {
-                    Text(
-                        text = "Talk to ZeChat powered by Mistral AI...",
-                        color = Color(0xFFA0A0A0),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Light,
-                    )
-                },
-                trailingIcon = {
-                    IconButton(
-                        modifier = Modifier
-                            .clip(shape = CircleShape)
-                            .align(Alignment.CenterVertically),
-                        enabled = buttonEnabled.value,
-                        onClick = {
-                            onChat(textState.value.text)
-                            textState.value = TextFieldValue()
-                            buttonEnabled.value = false
+        val textState = remember { mutableStateOf(TextFieldValue()) }
+        val buttonEnabled = remember { mutableStateOf(false) }
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(2.dp, Color.LightGray, RoundedCornerShape(50.dp)),
+            value = textState.value,
+            onValueChange = {
+                textState.value = it
+                buttonEnabled.value = it.text.isNotBlank()
+            },
+            shape = RoundedCornerShape(16.dp),
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.White,
+                cursorColor = Color(0xFFFDBA94),
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+            ),
+            placeholder = {
+                Text(
+                    text = "Talk to ZeChat powered by Mistral AI...",
+                    color = Color(0xFFA0A0A0),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Light,
+                )
+            },
+            trailingIcon = {
+                IconButton(
+                    modifier = Modifier.clip(shape = CircleShape),
+                    enabled = buttonEnabled.value,
+                    onClick = {
+                        onChat(textState.value.text)
+                        textState.value = TextFieldValue()
+                        buttonEnabled.value = false
+                    },
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = rememberVectorPainter(Icons.AutoMirrored.Filled.Send),
+                        contentDescription = "Send",
+                        tint = if (buttonEnabled.value) {
+                            Color(0xFFFD4A02)
+                        } else {
+                            Color.LightGray
                         },
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            painter = rememberVectorPainter(Icons.AutoMirrored.Filled.Send),
-                            contentDescription = "Send",
-                            tint = if (buttonEnabled.value) {
-                                Color(0xFFFD4A02)
-                            } else {
-                                Color.LightGray
-                            },
-                        )
-                    }
+                    )
                 }
-            )
-        }
+            }
+        )
     }
 }
