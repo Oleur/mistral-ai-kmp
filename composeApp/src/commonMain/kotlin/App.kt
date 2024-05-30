@@ -1,29 +1,11 @@
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -33,15 +15,10 @@ import di.mistralViewModel
 import kotlinx.coroutines.launch
 import mistral_ai_kmp.composeapp.generated.resources.Res
 import mistral_ai_kmp.composeapp.generated.resources.ic_mistral_ai
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import ui.ChatScreen
-import ui.HeaderScreen
-import ui.HistoryScreen
-import ui.ModelDropDown
+import ui.*
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 @Preview
 fun App() {
@@ -51,10 +28,12 @@ fun App() {
         val modelViewState by mistralViewModel.models.collectAsState()
         val historyViewState by mistralViewModel.history.collectAsState()
         val chatViewState by mistralViewModel.chat.collectAsState()
+        val key by mistralViewModel.key.collectAsState()
 
         var expanded by remember { mutableStateOf(false) }
 
         LaunchedEffect(Unit) {
+            mistralViewModel.init()
             mistralViewModel.fetchModels()
         }
 
@@ -146,6 +125,14 @@ fun App() {
                             )
                         }
                         ChatScreen(chatViewState = chatViewState, onChat = mistralViewModel::chat)
+                    }
+                }
+            }
+            // If needed, launch dialog to set up the key
+            key?.let {
+                AnimatedVisibility(visible = it.isBlank()) {
+                    LandingDialog { newKey ->
+                        mistralViewModel.updateKey(newKey)
                     }
                 }
             }

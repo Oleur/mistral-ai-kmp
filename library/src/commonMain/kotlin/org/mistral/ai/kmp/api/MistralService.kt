@@ -24,7 +24,6 @@ internal class MistralService(private val auth: String) {
     private val requestMapper = RequestMapper()
 
     private val clientJson = Json {
-        prettyPrint = true
         isLenient = true
         ignoreUnknownKeys =  true
     }
