@@ -68,6 +68,7 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             // Common
             implementation(libs.common.viewmodel)
+            implementation(libs.common.settings)
             // Project libraries
             implementation(project(":library"))
         }

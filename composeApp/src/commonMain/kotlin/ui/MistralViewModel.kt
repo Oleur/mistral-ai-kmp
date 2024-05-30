@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.mistral.ai.kmp.BuildKonfig
 import org.mistral.ai.kmp.domain.Model
 import ui.state.ChatViewState
 import ui.state.ContentViewState
@@ -25,6 +26,16 @@ class MistralViewModel(
 
     private val _chat: MutableStateFlow<ChatViewState> = MutableStateFlow(ChatViewState(emptyList()))
     val chat: StateFlow<ChatViewState> = _chat
+
+    private val _key: MutableStateFlow<String?> = MutableStateFlow(null)
+    val key: StateFlow<String?> = _key
+
+    fun init() {
+        viewModelScope.coroutineScope.launch(Dispatchers.Default) {
+            val apiKey = mistralUseCase.getApiKey()
+            _key.tryEmit(apiKey)
+        }
+    }
 
     fun fetchModels() {
         viewModelScope.coroutineScope.launch(Dispatchers.Default) {
@@ -104,8 +115,15 @@ class MistralViewModel(
     }
 
     fun newChat() {
-        viewModelScope.coroutineScope.launch {
+        viewModelScope.coroutineScope.launch(Dispatchers.Default) {
             _chat.tryEmit(ChatViewState(emptyList()))
+        }
+    }
+
+    fun updateKey(newKey: String) {
+        viewModelScope.coroutineScope.launch(Dispatchers.Default) {
+            mistralUseCase.setApiKey(newKey)
+            fetchModels()
         }
     }
 }

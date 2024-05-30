@@ -2,11 +2,15 @@ package domain
 
 import org.mistral.ai.kmp.domain.Model
 import data.repository.MistralRepository
+import data.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.mistral.ai.kmp.domain.Message
 
-class MistralUseCase(private val repository: MistralRepository) {
+class MistralUseCase(
+    private val repository: MistralRepository,
+    private val settingsRepository: SettingsRepository,
+) {
 
     suspend fun getModels(): List<Model> {
         val models = repository.getModels().getOrDefault(emptyList()).toMutableList()
@@ -35,4 +39,11 @@ class MistralUseCase(private val repository: MistralRepository) {
     }
 
     fun getSelectedModelId() = repository.getSelectedModelId()
+
+    fun setApiKey(apiKey: String) {
+        settingsRepository.setApiKey(apiKey)
+        repository.setApiKey(apiKey)
+    }
+
+    fun getApiKey() = settingsRepository.getApiKey()
 }

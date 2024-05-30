@@ -3,22 +3,23 @@ agp = "8.2.0"
 android-compileSdk = "34"
 android-minSdk = "26"
 android-targetSdk = "34"
-androidx-activityCompose = "1.8.2"
-androidx-appcompat = "1.6.1"
+androidx-activityCompose = "1.9.0"
+androidx-appcompat = "1.7.0"
 androidx-constraintlayout = "2.1.4"
-androidx-core-ktx = "1.12.0"
+androidx-core-ktx = "1.13.1"
 androidx-espresso-core = "3.5.1"
-androidx-material = "1.11.0"
+androidx-material = "1.12.0"
 androidx-test-junit = "1.1.5"
 viewmodel = "1.0.0-ALPHA-19"
-compose = "1.6.3"
-compose-plugin = "1.6.1"
+compose = "1.6.7"
+compose-plugin = "1.6.10"
 junit = "4.13.2"
 kotlin = "1.9.23"
-ktor = "2.3.9"
+ktor = "2.3.11"
 nexus-publish = "2.0.0-rc-1"
 buildkonfig = "0.15.1"
 slf4j = "2.0.11"
+kmp-settings = "1.1.1"
 
 [libraries]
 # Kotlin
@@ -50,6 +51,7 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 # Common
 common-viewmodel = { module = "com.rickclephas.kmm:kmm-viewmodel-core", version.ref = "viewmodel" }
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+common-settings = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "kmp-settings"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
