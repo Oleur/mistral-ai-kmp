@@ -1,6 +1,6 @@
 package org.mistral.ai.kmp.api
 
-import org.mistral.ai.kmp.domain.ChatParams
+import org.mistral.ai.kmp.domain.ModelParams
 import org.mistral.ai.kmp.domain.Embedding
 import org.mistral.ai.kmp.domain.Embeddings
 import org.mistral.ai.kmp.domain.Message
@@ -75,7 +75,7 @@ internal class RequestMapper {
         model: String,
         messages: List<Message>,
         stream: Boolean = false,
-        params: ChatParams? = null
+        params: ModelParams? = null
     ): CompletionRequest {
         return CompletionRequest(
             model = model,
@@ -91,6 +91,26 @@ internal class RequestMapper {
             maxTokens = params?.maxTokens,
             randomSeed = params?.randomSeed,
             safePrompt = params?.safePrompt ?: true
+        )
+    }
+
+    fun mapCodeCompletionRequest(
+        model: String,
+        prompt: String,
+        stream: Boolean = false,
+        params: ModelParams? = null
+    ): CodeCompletionRequest {
+        return CodeCompletionRequest(
+            model = model,
+            prompt = prompt,
+            suffix = params?.suffix,
+            stream = stream,
+            temperature = params?.temperature,
+            topP = params?.topP,
+            maxTokens = params?.maxTokens,
+            minTokens = params?.minTokens,
+            randomSeed = params?.randomSeed,
+            stop = params?.stop.orEmpty(),
         )
     }
 }

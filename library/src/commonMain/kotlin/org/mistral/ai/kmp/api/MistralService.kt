@@ -11,9 +11,10 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
-import org.mistral.ai.kmp.domain.ChatParams
+import org.mistral.ai.kmp.domain.ModelParams
 import org.mistral.ai.kmp.domain.Embeddings
 import org.mistral.ai.kmp.domain.Message
 import org.mistral.ai.kmp.domain.Model
@@ -63,7 +64,7 @@ internal class MistralService(private val auth: String) {
     suspend fun chat(
         model: String,
         messages: List<Message>,
-        params: ChatParams? = null,
+        params: ModelParams? = null,
     ): Result<List<Message>> {
         return runCatching {
             val request = requestMapper.mapCompletionRequest(
@@ -81,10 +82,31 @@ internal class MistralService(private val auth: String) {
         }
     }
 
+    suspend fun code(
+        model: String,
+        prompt: String,
+        params: ModelParams? = null,
+    ): Result<List<Message>> {
+        return runCatching {
+            val request = requestMapper.mapCodeCompletionRequest(
+                model = model,
+                prompt = prompt,
+                params = params
+            )
+
+            val response: CompletionsResponse = client.post("/v1/fim/completions") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }.body()
+
+            responseMapper.mapChoices(response.choices)
+        }
+    }
+
     suspend fun chatStream(
         model: String,
         messages: List<Message>,
-        params: ChatParams? = null,
+        params: ModelParams? = null,
     ): Flow<Result<List<Message>>> = flow {
         runCatching {
             val request = requestMapper.mapCompletionRequest(
@@ -99,15 +121,31 @@ internal class MistralService(private val auth: String) {
                 setBody(request)
             }.bodyAsChannel()
 
-            while (!channel.isClosedForRead) {
-                val line = channel.readUTF8Line()?.takeUnless { it.isEmpty() } ?: continue
-                try {
-                    val response = clientJson.decodeFromString<CompletionsResponse>(line.removePrefix(STREAM_PREFIX))
-                    emit(Result.success(responseMapper.mapStreamChoices(response.choices)))
-                } catch (e: Exception) {
-                    emit(Result.failure(e))
-                }
-            }
+            decode(channel)
+        }.getOrElse {
+            emit(Result.failure(it))
+        }
+    }
+
+    suspend fun codeStream(
+        model: String,
+        prompt: String,
+        params: ModelParams? = null,
+    ): Flow<Result<List<Message>>> = flow {
+        runCatching {
+            val request = requestMapper.mapCodeCompletionRequest(
+                model = model,
+                prompt = prompt,
+                stream = true,
+                params = params
+            )
+
+            val channel = client.post("/v1/fim/completions") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }.bodyAsChannel()
+
+            decode(channel)
         }.getOrElse {
             emit(Result.failure(it))
         }
@@ -123,6 +161,18 @@ internal class MistralService(private val auth: String) {
             }.body()
 
             responseMapper.mapEmbeddings(response)
+        }
+    }
+
+    private suspend fun FlowCollector<Result<List<Message>>>.decode(channel: ByteReadChannel) {
+        while (!channel.isClosedForRead) {
+            val line = channel.readUTF8Line()?.takeUnless { it.isEmpty() } ?: continue
+            try {
+                val response = clientJson.decodeFromString<CompletionsResponse>(line.removePrefix(STREAM_PREFIX))
+                emit(Result.success(responseMapper.mapStreamChoices(response.choices)))
+            } catch (e: Exception) {
+                emit(Result.failure(e))
+            }
         }
     }
 
