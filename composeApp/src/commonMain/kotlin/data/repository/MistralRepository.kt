@@ -3,7 +3,7 @@ package data.repository
 import data.datasource.ModelCacheDataSource
 import kotlinx.coroutines.flow.Flow
 import org.mistral.ai.kmp.MistralClient
-import org.mistral.ai.kmp.domain.ChatParams
+import org.mistral.ai.kmp.domain.ModelParams
 import org.mistral.ai.kmp.domain.Message
 import org.mistral.ai.kmp.domain.Model
 
@@ -20,7 +20,7 @@ class MistralRepository(
         return mistralClient.chat(
             model = model,
             messages = listOf(Message(content = message)),
-            params = ChatParams(safePrompt = false),
+            params = ModelParams(safePrompt = false),
         )
     }
 
@@ -28,7 +28,7 @@ class MistralRepository(
         return mistralClient.chatStream(
             model = model,
             messages = listOf(Message(content = message)),
-            params = ChatParams(safePrompt = false),
+            params = ModelParams(safePrompt = false),
         )
     }
 

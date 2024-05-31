@@ -5,12 +5,15 @@ data class Chat(
     val messages: List<Message>,
 )
 
-data class ChatParams(
+data class ModelParams(
     val safePrompt: Boolean? = true,
     val temperature: Float? = null,
     val topP: Float? = null,
     val maxTokens: Long? = null,
+    val minTokens: Long? = null,
     val randomSeed: Int? = null,
+    val stop: List<String> = emptyList(),
+    val suffix: String? = null,
 )
 
 data class Message(
